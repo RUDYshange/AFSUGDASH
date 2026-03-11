@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>AFSUG Unified Executive Dashboard 2025/2026</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <script type="importmap"> 
+    { 
+      "imports": { 
+        "react": "https://esm.sh/react@18.2.0", 
+        "react-dom": "https://esm.sh/react-dom@18.2.0", 
+        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client", 
+        "recharts": "https://esm.sh/recharts@2.12.2?external=react,react-dom", 
+        "lucide-react": "https://esm.sh/lucide-react@0.344.0?external=react,react-dom", 
+        "date-fns": "https://esm.sh/date-fns@3.0.0" 
+      } 
+    } 
+    </script> 
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .gauge-container {
+            position: relative;
+            width: 160px;
+            height: 80px;
+            overflow: hidden;
+        }
+        .gauge-bg {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 20px solid #e5e7eb;
+        }
+        .gauge-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 20px solid transparent;
+            border-top-color: #135bec;
+            border-right-color: #135bec;
+            transform: rotate(45deg);
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        .tab-button.active {
+            border-bottom: 3px solid #135bec;
+            color: #135bec;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#111318] dark:text-white">
+    <!-- Global Header -->
+    <header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-[#dbdfe6] dark:border-[#2d3748] bg-white dark:bg-[#1a202c] px-10 py-4">
+        <div class="flex items-center gap-4">
+            <img src="cropped-AFSUG_Logo_Full-Colour.png" alt="AFSUG logo" class="h-10 w-auto object-contain" />
+            <h1 class="text-xl font-bold">AFSUG Executive Dashboard</h1>
+            <span class="ml-4 px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded">2025/2026</span>
+        </div>
+        <div class="flex items-center gap-6">
+            <button onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <span class="material-symbols-outlined">brightness_4</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <div class="flex border-b border-[#dbdfe6] dark:border-[#2d3748] bg-white dark:bg-[#1a202c] overflow-x-auto">
+        <button class="tab-button active flex-1 px-6 py-4 text-sm font-semibold text-center whitespace-nowrap hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" onclick="switchTab(event, 'linkedin')">
+            <span class="material-symbols-outlined mr-2 align-text-bottom">trending_up</span>LinkedIn Analytics
+        </button>
+        <button class="tab-button flex-1 px-6 py-4 text-sm font-semibold text-center whitespace-nowrap hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" onclick="switchTab(event, 'events')">
+            <span class="material-symbols-outlined mr-2 align-text-bottom">calendar_today</span>Events Performance
+        </button>
+        <button class="tab-button flex-1 px-6 py-4 text-sm font-semibold text-center whitespace-nowrap hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" onclick="switchTab(event, 'membership')">
+            <span class="material-symbols-outlined mr-2 align-text-bottom">groups</span>Membership Overview
+        </button>
+        <button class="tab-button flex-1 px-6 py-4 text-sm font-semibold text-center whitespace-nowrap hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" onclick="switchTab(event, 'volunteer')">
+            <span class="material-symbols-outlined mr-2 align-text-bottom">volunteer_activism</span>Volunteer Ecosystem
+        </button>
+        <button class="tab-button flex-1 px-6 py-4 text-sm font-semibold text-center whitespace-nowrap hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" onclick="switchTab(event, 'time-intelligence')">
+            <span class="material-symbols-outlined mr-2 align-text-bottom">schedule</span>Time Intelligence
+        </button>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="min-h-[calc(100vh-140px)]">
+        
+        <!-- LINKEDIN ANALYTICS TAB -->
+        <div id="linkedin" class="tab-pane active">
+            <div class="max-w-[1200px] mx-auto px-6 py-8 space-y-6">
+                <!-- Page Heading -->
+                <div class="flex flex-wrap justify-between items-end gap-4 bg-white dark:bg-[#1a202c] p-6 rounded-xl border border-[#dbdfe6] dark:border-[#2d3748]">
+                    <div class="flex flex-col gap-1">
+                        <p class="text-[#111318] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">LinkedIn Performance Dashboard</p>
+                        <p class="text-[#616f89] dark:text-gray-400 text-base font-normal leading-normal">Executive analysis for African SAP User Group (AFSUG) 2025/2026</p>
+                    </div>
+                    <div class="flex flex-col items-end gap-2">
+                        <span class="text-xs font-semibold text-[#616f89] uppercase tracking-wider">Reporting Status</span>
+                        <button class="flex min-w-[84px] cursor-default items-center justify-center rounded-lg h-10 px-4 bg-[#f0f2f4] dark:bg-[#2d3748] text-[#111318] dark:text-white text-sm font-bold">
+                            <span class="truncate">Last Updated: Jan 29, 2026</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#1a202c] border border-[#dbdfe6] dark:border-[#2d3748]">
+                        <p class="text-[#616f89] dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Total Followers</p>
+                        <div class="flex items-baseline justify-between">
+                            <p id="kpi-followers" class="text-[#111318] dark:text-white tracking-tight text-3xl font-bold">4,411</p>
+                            <p id="kpi-followers-growth" class="text-[#07883b] text-sm font-bold bg-[#07883b]/10 px-2 py-1 rounded">+4.0%</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#1a202c] border border-[#dbdfe6] dark:border-[#2d3748]">
+                        <p class="text-[#616f89] dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Total Engagement</p>
+                        <div class="flex items-baseline justify-between">
+                            <p id="kpi-engagement" class="text-[#111318] dark:text-white tracking-tight text-3xl font-bold">3,247</p>
+                            <p class="text-[#07883b] text-sm font-bold bg-[#07883b]/10 px-2 py-1 rounded">+8.1%</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#1a202c] border border-[#dbdfe6] dark:border-[#2d3748]">
+                        <p class="text-[#616f89] dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Engagement Rate</p>
+                        <div class="flex items-baseline justify-between">
+                            <p id="kpi-engagement-rate" class="text-[#111318] dark:text-white tracking-tight text-3xl font-bold">3.3%</p>
+                            <p id="kpi-engagement-rate-growth" class="text-[#07883b] text-sm font-bold bg-[#07883b]/10 px-2 py-1 rounded">+0.4%</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#1a202c] border border-[#dbdfe6] dark:border-[#2d3748]">
+                        <p class="text-[#616f89] dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Post Impressions</p>
+                        <div class="flex items-baseline justify-between">
+                            <p id="kpi-impressions" class="text-[#111318] dark:text-white tracking-tight text-3xl font-bold">98.5K</p>
+                            <p class="text-[#07883b] text-sm font-bold bg-[#07883b]/10 px-2 py-1 rounded">+12.3%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Top 5 Posts Bar Chart -->
+                    <div class="flex flex-col gap-4 rounded-xl border border-[#dbdfe6] dark:border-[#2d3748] bg-white dark:bg-[#1a202c] p-6">
+                        <div>
+                            <p class="text-[#111318] dark:text-white text-lg font-bold">Top 5 Posts by Engagement Rate</p>
+                            <p class="text-[#616f89] dark:text-gray-400 text-sm font-normal">Based on high-impact executive interactions</p>
+                        </div>
+                        <div id="top-posts-container" class="flex flex-col gap-6 py-2 h-full justify-center">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Industries Donut -->
+                    <div class="flex flex-col gap-4 rounded-xl border border-[#dbdfe6] dark:border-[#2d3748] bg-white dark:bg-[#1a202c] p-6">
+                        <div>
+                            <p class="text-[#111318] dark:text-white text-lg font-bold">Top Industries</p>
+                            <p class="text-[#616f89] dark:text-gray-400 text-sm font-normal">Audience distribution by sector</p>
+                        </div>
+                        <div id="industries-container" class="flex items-center gap-8 py-4">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Executive Insights Section -->
+                <div class="rounded-xl border border-[#dbdfe6] dark:border-[#2d3748] bg-white dark:bg-[#1a202c] p-6">
+                    <div class="flex items-center gap-2 mb-4 text-primary">
+                        <span class="material-symbols-outlined">lightbulb</span>
+                        <h3 class="font-bold text-lg">Executive Summary & Key Insights</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="space-y-2">
+                            <p class="font-bold text-sm text-primary uppercase">Growth Trend</p>
+                            <p class="text-sm leading-relaxed text-[#616f89] dark:text-gray-300">
+                                The 15.4% YoY increase in followers is primarily driven by targeted LinkedIn campaigns during the Q4 2025 conference season.
+                            </p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="font-bold text-sm text-primary uppercase">Content Strategy</p>
+                            <p class="text-sm leading-relaxed text-[#616f89] dark:text-gray-300">
+                                Technical insights regarding S/4HANA migration outperformed community news, suggesting a high demand for expert SAP guidance.
+                            </p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="font-bold text-sm text-primary uppercase">Regional Impact</p>
+                            <p class="text-sm leading-relaxed text-[#616f89] dark:text-gray-300">
+                                Growth in Nigeria and Kenya exceeded projections, indicating a strong opportunity for AFSUG expansion in these hubs in 2026.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EVENTS PERFORMANCE TAB -->
+        <div id="events" class="tab-pane">
+            <div class="max-w-[1200px] mx-auto px-6 py-8 space-y-8">
+                <!-- Header -->
+                <div>
+                    <h2 class="text-2xl font-black tracking-tight">Events Performance Dashboard</h2>
+                    <p class="text-[#616f89] text-sm font-normal">Real-time attendance and engagement tracking for 2025/2026</p>
+                </div>
+
+                <!-- KPI & Gauge Section -->
+                <section class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <div class="lg:col-span-2 bg-white dark:bg-gray-900 rounded-xl border border-[#dbdfe6] dark:border-gray-800 p-6 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-semibold text-[#616f89] uppercase tracking-wider mb-2">Efficiency KPI</p>
+                            <h3 class="text-3xl font-black mb-1">Show-Up Rate</h3>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-primary text-4xl font-black">78.0%</span>
+                                <span class="text-[#07883b] text-sm font-bold">+3.2% vs 2024</span>
+                            </div>
+                            <p class="mt-4 text-sm text-[#616f89] max-w-xs">Calculated based on 12,450 total registrations across all SIG and General events.</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="gauge-container">
+                                <div class="gauge-bg"></div>
+                                <div class="gauge-fill"></div>
+                                <div class="absolute bottom-0 left-0 right-0 text-center font-bold text-lg">78%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-900 rounded-xl border border-[#dbdfe6] dark:border-gray-800 p-6 flex flex-col justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-[#616f89] mb-1">Total Registrations</p>
+                            <p class="text-3xl font-black leading-tight">12,450</p>
+                        </div>
+                        <div class="h-1 w-full bg-gray-100 dark:bg-gray-800 rounded-full mt-4 overflow-hidden">
+                            <div class="h-full bg-primary" style="width: 85%"></div>
+                        </div>
+                        <p class="text-xs text-[#616f89] mt-2">85% of annual target reached</p>
+                    </div>
+                    <div class="bg-white dark:bg-gray-900 rounded-xl border border-[#dbdfe6] dark:border-gray-800 p-6 flex flex-col justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-[#616f89] mb-1">Total Attendance</p>
+                            <p class="text-3xl font-black leading-tight">9,711</p>
+                        </div>
+                        <div class="h-1 w-full bg-gray-100 dark:bg-gray-800 rounded-full mt-4 overflow-hidden">
+                            <div class="h-full bg-[#07883b]" style="width: 78%"></div>
+                        </div>
+                        <p class="text-xs text-[#616f89] mt-2">Verified check-ins at 42 events</p>
+                    </div>
+                </section>
+
+                <!-- Comparison Chart -->
+                <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white dark:bg-gray-900 rounded-xl border border-[#dbdfe6] dark:border-gray-800 p-6">
+                        <div class="flex items-center justify-between mb-8">
+                            <h4 class="text-lg font-bold">Top 5 Events: Registrations vs Attendance</h4>
+                            <div class="flex gap-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="size-3 rounded-full bg-primary"></div>
+                                    <span class="text-xs text-[#616f89]">Regs</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="size-3 rounded-full bg-[#cbdcfd]"></div>
+                                    <span class="text-xs text-[#616f89]">Attended</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-semibold">
+                                    <span>SAP S/4HANA Migration Summit</span>
+                                    <span>2,100 / 1,850</span>
+                                </div>
+                                <div class="w-full flex h-6 gap-1">
+                                    <div class="bg-primary rounded-l h-full" style="width: 100%"></div>
+                                    <div class="bg-[#cbdcfd] rounded-r h-full" style="width: 88%"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-semibold">
+                                    <span>AFSUG Annual Conference 2025</span>
+                                    <span>1,950 / 1,400</span>
+                                </div>
+                                <div class="w-full flex h-6 gap-1">
+                                    <div class="bg-primary rounded-l h-full" style="width: 93%"></div>
+                                    <div class="bg-[#cbdcfd] rounded-r h-full" style="width: 72%"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-semibold">
+                                    <span>Tech Platform SIG Q2</span>
+                                    <span>1,420 / 1,100</span>
+                                </div>
+                                <div class="w-full flex h-6 gap-1">
+                                    <div class="bg-primary rounded-l h-full" style="width: 68%"></div>
+                                    <div class="bg-[#cbdcfd] rounded-r h-full" style="width: 52%"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-semibold">
+                                    <span>SuccessFactors Workshop</span>
+                                    <span>1,150 / 980</span>
+                                </div>
+                                <div class="w-full flex h-6 gap-1">
+                                    <div class="bg-primary rounded-l h-full" style="width: 55%"></div>
+                                    <div class="bg-[#cbdcfd] rounded-r h-full" style="width: 47%"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-semibold">
+                                    <span>BTP Innovation Day</span>
+                                    <span>890 / 810</span>
+                                </div>
+                                <div class="w-full flex h-6 gap-1">
+                                    <div class="bg-primary rounded-l h-full" style="width: 42%"></div>
+                                    <div class="bg-[#cbdcfd] rounded-r h-full" style="width: 38%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SIG Breakdown -->
+                    <div class="bg-white dark:bg-gray-900 rounded-xl border border-[#dbdfe6] dark:border-gray-800 p-6">
+                        <div class="flex items-center justify-between mb-8">
+                            <h4 class="text-lg font-bold">Event Type Breakdown (SIGs)</h4>
+                        </div>
+                        <div class="flex items-end justify-between h-64 gap-4 px-4">
+                            <div class="flex-1 flex flex-col items-center gap-2 group">
+                                <div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-lg relative group-hover:bg-primary/30 transition-colors" style="height: 85%">
+                                    <div class="absolute inset-x-0 bottom-0 bg-primary h-2 rounded-t-sm"></div>
+                                    <span class="absolute -top-6 inset-x-0 text-center text-xs font-bold">18</span>
+                                </div>
+                                <span class="text-[10px] text-center font-semibold text-[#616f89] uppercase transform -rotate-45 mt-4 origin-top">Tech Platform</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2 group">
+                                <div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-lg relative group-hover:bg-primary/30 transition-colors" style="height: 60%">
+                                    <div class="absolute inset-x-0 bottom-0 bg-primary h-2 rounded-t-sm"></div>
+                                    <span class="absolute -top-6 inset-x-0 text-center text-xs font-bold">12</span>
+                                </div>
+                                <span class="text-[10px] text-center font-semibold text-[#616f89] uppercase transform -rotate-45 mt-4 origin-top">AFSUG General</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2 group">
+                                <div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-lg relative group-hover:bg-primary/30 transition-colors" style="height: 40%">
+                                    <div class="absolute inset-x-0 bottom-0 bg-primary h-2 rounded-t-sm"></div>
+                                    <span class="absolute -top-6 inset-x-0 text-center text-xs font-bold">8</span>
+                                </div>
+                                <span class="text-[10px] text-center font-semibold text-[#616f89] uppercase transform -rotate-45 mt-4 origin-top">S/4HANA SIG</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2 group">
+                                <div class="w-full bg-primary/20 dark:bg-primary/10 rounded-t-lg relative group-hover:bg-primary/30 transition-colors" style="height: 30%">
+                                    <div class="absolute inset-x-0 bottom-0 bg-primary h-2 rounded-t-sm"></div>
+                                    <span class="absolute -top-6 inset-x-0 text-center text-xs font-bold">4</span>
+                                </div>
+                                <span class="text-[10px] text-center font-semibold text-[#616f89] uppercase transform -rotate-45 mt-4 origin-top">Cloud Success</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Footer Summary -->
+                <footer class="bg-white dark:bg-gray-900 rounded-xl border border-[#dbdfe6] dark:border-gray-800 p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex gap-12">
+                            <div>
+                                <p class="text-xs font-bold text-[#616f89] uppercase mb-1">Upcoming Events</p>
+                                <p class="text-xl font-black">12</p>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-[#616f89] uppercase mb-1">Pending Regs</p>
+                                <p class="text-xl font-black">3,410</p>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-[#616f89] uppercase mb-1">Target Rate</p>
+                                <p class="text-xl font-black text-primary">85.0%</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-[#616f89]">Last updated: 29 Jan 2026, 09:42 AM</p>
+                            <p class="text-xs font-medium text-primary">System healthy: Live sync active</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <!-- MEMBERSHIP OVERVIEW TAB -->
+        <div id="membership" class="tab-pane">
+            <div class="max-w-[1200px] mx-auto px-6 py-8 space-y-8">
+                <!-- Breadcrumbs -->
+                <div class="flex items-center gap-2">
+                    <a class="text-[#616f89] dark:text-gray-400 text-sm font-medium hover:text-primary" href="#">Dashboard</a>
+                    <span class="material-symbols-outlined text-[#616f89] text-xs">chevron_right</span>
+                    <span class="text-[#111318] dark:text-white text-sm font-semibold">Membership & Community</span>
+                </div>
+
+                <!-- Page Header -->
+                <div>
+                    <h2 class="text-3xl font-bold text-[#111318] dark:text-white mb-2">Membership Overview</h2>
+                    <p class="text-[#616f89] dark:text-gray-400">Analysis of the AFSUG ecosystem reach and growth across the continent.</p>
+                </div>
+
+                <!-- Main Dashboard Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Left Column: KPIs & Benefits -->
+                    <div class="lg:col-span-4 flex flex-col gap-6">
+                        <!-- Hero KPI Card -->
+                        <div class="bg-white dark:bg-[#1a212f] rounded-xl p-8 border border-[#dbdfe6] dark:border-[#2d3644] flex flex-col items-center justify-center text-center shadow-sm">
+                            <span class="material-symbols-outlined text-primary text-5xl mb-4">groups</span>
+                            <p class="text-[#616f89] dark:text-gray-400 text-lg font-medium mb-1">Active Member Companies</p>
+                            <h3 class="text-6xl font-black text-primary tracking-tight">132</h3>
+                            <div class="mt-4 flex items-center gap-1 text-[#07883b] bg-[#07883b]/10 px-3 py-1 rounded-full text-sm font-bold">
+                                <span class="material-symbols-outlined text-sm">trending_up</span>
+                                +8.2% YoY
+                            </div>
+                        </div>
+
+                        <!-- Membership Benefits Section -->
+                        <div class="bg-white dark:bg-[#1a212f] rounded-xl p-6 border border-[#dbdfe6] dark:border-[#2d3644]">
+                            <h3 class="text-lg font-bold mb-4 text-[#111318] dark:text-white">The AFSUG Advantage</h3>
+                            <div class="flex flex-col gap-4">
+                                <div class="flex items-start gap-4">
+                                    <div class="p-2 bg-primary/10 rounded-lg">
+                                        <span class="material-symbols-outlined text-primary">hub</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-sm">Networking & Influence</h4>
+                                        <p class="text-xs text-[#616f89] dark:text-gray-400">Direct access to SAP leadership and peer-to-peer sharing.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="p-2 bg-primary/10 rounded-lg">
+                                        <span class="material-symbols-outlined text-primary">school</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-sm">Knowledge Sharing</h4>
+                                        <p class="text-xs text-[#616f89] dark:text-gray-400">Exclusive webinars, Special Interest Groups (SIGs), and documentation.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-4">
+                                    <div class="p-2 bg-primary/10 rounded-lg">
+                                        <span class="material-symbols-outlined text-primary">campaign</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-sm">Unified Voice</h4>
+                                        <p class="text-xs text-[#616f89] dark:text-gray-400">Collective bargaining and advocacy for African business needs.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Map & Activity -->
+                    <div class="lg:col-span-8 flex flex-col gap-6">
+                        <!-- Recent Member Activity -->
+                        <div class="bg-white dark:bg-[#1a212f] rounded-xl border border-[#dbdfe6] dark:border-[#2d3644]">
+                            <div class="px-6 py-4 border-b border-[#dbdfe6] dark:border-[#2d3644]">
+                                <h3 class="text-lg font-bold text-[#111318] dark:text-white">Recent Activity</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="bg-background-light dark:bg-[#2d3644]/30 text-[#616f89] dark:text-gray-400 font-semibold">
+                                        <tr>
+                                            <th class="px-6 py-3">Company Name</th>
+                                            <th class="px-6 py-3">Industry</th>
+                                            <th class="px-6 py-3">Action</th>
+                                            <th class="px-6 py-3">Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-[#dbdfe6] dark:divide-[#2d3644]">
+                                        <tr>
+                                            <td class="px-6 py-4 font-bold">Standard Bank</td>
+                                            <td class="px-6 py-4">Finance</td>
+                                            <td class="px-6 py-4"><span class="px-2 py-0.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full text-xs">Renewed</span></td>
+                                            <td class="px-6 py-4 text-xs text-[#616f89]">2025-05-12</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 font-bold">Safaricom PLC</td>
+                                            <td class="px-6 py-4">Telecommunications</td>
+                                            <td class="px-6 py-4"><span class="px-2 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-xs">New Joiner</span></td>
+                                            <td class="px-6 py-4 text-xs text-[#616f89]">2025-05-10</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 font-bold">Anglo American</td>
+                                            <td class="px-6 py-4">Mining</td>
+                                            <td class="px-6 py-4"><span class="px-2 py-0.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full text-xs">Renewed</span></td>
+                                            <td class="px-6 py-4 text-xs text-[#616f89]">2025-05-08</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 font-bold">Dangote Group</td>
+                                            <td class="px-6 py-4">Manufacturing</td>
+                                            <td class="px-6 py-4"><span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded-full text-xs">Updated Profile</span></td>
+                                            <td class="px-6 py-4 text-xs text-[#616f89]">2025-05-05</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Geographic Stats -->
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="bg-white dark:bg-[#1a212f] rounded-xl p-6 border border-[#dbdfe6] dark:border-[#2d3644]">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary">public</span>
+                                    <p class="text-xs font-bold text-[#616f89] uppercase mb-1">Top Region</p>
+                                </div>
+                                <p class="text-2xl font-black">Southern Africa</p>
+                                <p class="text-xs text-[#616f89] mt-2">65% of total membership</p>
+                            </div>
+                            <div class="bg-white dark:bg-[#1a212f] rounded-xl p-6 border border-[#dbdfe6] dark:border-[#2d3644]">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-primary">location_on</span>
+                                    <p class="text-xs font-bold text-[#616f89] uppercase mb-1">Countries Served</p>
+                                </div>
+                                <p class="text-2xl font-black">8+</p>
+                                <p class="text-xs text-[#616f89] mt-2">Across the continent</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VOLUNTEER ECOSYSTEM TAB -->
+        <div id="volunteer" class="tab-pane">
+            <div class="max-w-[1200px] mx-auto px-6 py-8 space-y-8">
+                <!-- Breadcrumbs -->
+                <div class="flex items-center gap-2">
+                    <a class="text-[#616f89] dark:text-gray-400 text-sm font-medium" href="#">Dashboard</a>
+                    <span class="text-[#616f89] dark:text-gray-400 text-sm">/</span>
+                    <span class="text-primary text-sm font-medium">Volunteer Ecosystem</span>
+                </div>
+
+                <!-- Page Heading -->
+                <div class="flex flex-wrap justify-between items-end gap-4">
+                    <div class="flex flex-col gap-2">
+                        <h2 class="text-4xl font-black leading-tight tracking-tight">Volunteer Ecosystem Infographic</h2>
+                        <p class="text-[#616f89] dark:text-gray-400 text-lg">2025/2026 Fiscal Cycle Data Analysis</p>
+                    </div>
+                </div>
+
+                <!-- Key Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Volunteers Card -->
+                    <div class="flex flex-col gap-4 rounded-xl p-8 bg-white dark:bg-gray-800 border border-[#dbdfe6] dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <div class="p-3 rounded-lg bg-primary/10 text-primary">
+                                <span class="material-symbols-outlined text-3xl">groups</span>
+                            </div>
+                            <span class="text-[#07883b] text-sm font-bold bg-[#07883b]/10 px-2 py-1 rounded">+5.2%</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold uppercase tracking-wider text-[#616f89] dark:text-gray-400 mb-1">Active Volunteers</p>
+                            <p class="text-5xl font-black text-primary">71</p>
+                        </div>
+                        <div class="w-full bg-gray-100 dark:bg-gray-700 h-1.5 rounded-full mt-2">
+                            <div class="bg-primary h-1.5 rounded-full" style="width: 71%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Board Leaders Card -->
+                    <div class="flex flex-col gap-4 rounded-xl p-8 bg-white dark:bg-gray-800 border border-[#dbdfe6] dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start">
+                            <div class="p-3 rounded-lg bg-primary/10 text-primary">
+                                <span class="material-symbols-outlined text-3xl">workspace_premium</span>
+                            </div>
+                            <span class="text-[#616f89] text-sm font-bold bg-gray-100 px-2 py-1 rounded">Stable</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold uppercase tracking-wider text-[#616f89] dark:text-gray-400 mb-1">Board Leaders</p>
+                            <p class="text-5xl font-black text-primary">10</p>
+                        </div>
+                        <div class="w-full bg-gray-100 dark:bg-gray-700 h-1.5 rounded-full mt-2">
+                            <div class="bg-primary h-1.5 rounded-full" style="width: 10%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Total Hours Card -->
+                    <div class="flex flex-col gap-4 rounded-xl p-8 bg-white dark:bg-gray-800 border border-primary/30 dark:border-primary/50 shadow-lg ring-1 ring-primary/20">
+                        <div class="flex justify-between items-start">
+                            <div class="p-3 rounded-lg bg-primary text-white">
+                                <span class="material-symbols-outlined text-3xl">schedule</span>
+                            </div>
+                            <span class="text-[#07883b] text-sm font-bold bg-[#07883b]/10 px-2 py-1 rounded">+12.8%</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold uppercase tracking-wider text-[#616f89] dark:text-gray-400 mb-1">Total Impact Hours</p>
+                            <p class="text-5xl font-black text-primary">988</p>
+                        </div>
+                        <div class="w-full bg-gray-100 dark:bg-gray-700 h-1.5 rounded-full mt-2 overflow-hidden">
+                            <div class="bg-primary h-1.5 rounded-full" style="width: 98.8%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- The 1000 Hours Story -->
+                <div class="relative overflow-hidden rounded-2xl bg-primary px-8 py-16 md:px-16 md:py-24 text-white text-center shadow-2xl">
+                    <!-- Decorative background elements -->
+                    <div class="absolute top-0 right-0 -mr-20 -mt-20 size-80 rounded-full bg-white/10 blur-3xl"></div>
+                    <div class="absolute bottom-0 left-0 -ml-20 -mb-20 size-80 rounded-full bg-blue-400/20 blur-3xl"></div>
+                    <div class="relative z-10 flex flex-col items-center gap-8">
+                        <div class="flex items-center justify-center gap-4">
+                            <span class="material-symbols-outlined text-5xl opacity-80">history_toggle_off</span>
+                            <h3 class="text-4xl md:text-5xl font-black tracking-tight leading-tight max-w-[800px]">
+                                The 1,000 Hours Story
+                            </h3>
+                            <span class="material-symbols-outlined text-5xl opacity-80">diversity_3</span>
+                        </div>
+                        <p class="text-xl md:text-2xl font-medium leading-relaxed max-w-[720px] opacity-90">
+                            Nearly <span class="text-yellow-300 font-bold">1,000 hours</span> of professional time contributed annually by our dedicated ecosystem to drive SAP excellence across the African continent.
+                        </p>
+                        <div class="flex flex-wrap justify-center gap-4 pt-4">
+                            <button class="min-w-[200px] h-14 px-8 rounded-xl bg-white text-primary font-bold text-lg hover:bg-opacity-95 transition-all shadow-xl flex items-center justify-center">
+                                Explore Our Impact
+                            </button>
+                            <button class="min-w-[200px] h-14 px-8 rounded-xl bg-primary/20 border border-white/30 text-white font-bold text-lg backdrop-blur-sm hover:bg-white/10 transition-all flex items-center justify-center">
+                                Volunteer Spotlight
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Qualitative Context Footer -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center border-t border-gray-200 dark:border-gray-800 pt-8">
+                    <div class="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-900/50">
+                        <div class="text-primary">
+                            <span class="material-symbols-outlined text-4xl">info</span>
+                        </div>
+                        <p class="text-sm text-[#616f89] dark:text-gray-400 italic">
+                            "This ecosystem represents a 24% increase in specialized volunteer hours compared to the previous cycle, reflecting a growing commitment to community-led innovation."
+                        </p>
+                    </div>
+                    <div class="flex justify-end gap-6 opacity-60 grayscale hover:grayscale-0 transition-all">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-xl">analytics</span>
+                            <span class="text-xs font-bold uppercase">Verified Data</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-xl">public</span>
+                            <span class="text-xs font-bold uppercase">Pan-African Scope</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TIME INTELLIGENCE TAB -->
+        <div id="time-intelligence" class="tab-pane">
+            <div id="time-intelligence-root"></div>
+        </div>
+
+    </main>
+
+    <script type="text/babel" data-type="module"> 
+import React, { useState, useMemo, useEffect } from 'react'; 
+import { createRoot } from 'react-dom/client'; 
+import {  
+  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,  
+  ResponsiveContainer, ComposedChart, Area, AreaChart 
+} from 'recharts'; 
+import {  
+  TrendingUp, TrendingDown, Calendar, Zap, Activity, BarChart3, Clock,  
+  ChevronDown, ChevronRight, Filter, Download, Settings, PlayCircle, PauseCircle, 
+  RefreshCw, Maximize2, Target, Layers, Globe2, Users, Eye, Heart, Share2 
+} from 'lucide-react'; 
+import { format, subDays, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, parseISO } from 'date-fns'; 
+ 
+const TimeIntelligenceDashboard = () => { 
+  const [dateRange, setDateRange] = useState('all'); 
+  const [selectedMetric, setSelectedMetric] = useState('impressions'); 
+  const [comparisonMode, setComparisonMode] = useState('none'); 
+  const [movingAvgPeriod, setMovingAvgPeriod] = useState(7); 
+  const [showTrendline, setShowTrendline] = useState(true); 
+  const [isLive, setIsLive] = useState(false); 
+ 
+  // Transform data from globalData
+  const rawData = useMemo(() => {
+    if (!window.dashboardData || !window.dashboardData.trends) return [];
+    const trends = window.dashboardData.trends;
+    return trends.dates.map((date, i) => ({
+      date: date,
+      impressions: trends.impressions[i],
+      engagement: trends.engagement[i],
+      clicks: trends.clicks?.[i] || 0,
+      reactions: trends.reactions?.[i] || 0,
+      comments: trends.comments?.[i] || 0,
+      reposts: trends.reposts?.[i] || 0,
+      followers_daily: trends.followers_daily[i],
+      followers_cumulative: trends.followers_cumulative[i],
+      displayDate: format(new Date(date), 'MMM dd')
+    }));
+  }, []);
+
+  // Calculate time-based metrics 
+  const timeMetrics = useMemo(() => { 
+    if (rawData.length === 0) return { data: [], stats: { total: 0, avg: 0, max: 0, min: 0, trendDirection: 'flat', trendPercentage: 0 } };
+
+    const sortedData = [...rawData].sort((a, b) => new Date(a.date) - new Date(b.date)); 
+     
+    // Calculate date ranges 
+    const latestDate = new Date(sortedData[sortedData.length - 1].date); 
+    const ranges = { 
+      last7: sortedData.filter(d => (latestDate - new Date(d.date)) / (1000 * 60 * 60 * 24) <= 7), 
+      last30: sortedData.filter(d => (latestDate - new Date(d.date)) / (1000 * 60 * 60 * 24) <= 30), 
+      last90: sortedData.filter(d => (latestDate - new Date(d.date)) / (1000 * 60 * 60 * 24) <= 90), 
+      all: sortedData 
+    }; 
+     
+    const currentData = ranges[dateRange] || sortedData; 
+     
+    // Calculate moving average 
+    const withMovingAvg = currentData.map((item, idx) => { 
+      const start = Math.max(0, idx - movingAvgPeriod + 1); 
+      const slice = currentData.slice(start, idx + 1); 
+      const avg = slice.reduce((sum, d) => sum + d[selectedMetric], 0) / slice.length; 
+      return { 
+        ...item, 
+        movingAvg: Math.round(avg * 10) / 10, 
+      }; 
+    }); 
+     
+    // Calculate period-over-period comparison 
+    let comparisonData = withMovingAvg; 
+    if (comparisonMode === 'mom') { 
+      comparisonData = withMovingAvg.map((item, idx) => { 
+        const prevMonthIdx = idx - 30; 
+        if (prevMonthIdx >= 0) { 
+          const prevValue = currentData[prevMonthIdx][selectedMetric]; 
+          const change = prevValue ? ((item[selectedMetric] - prevValue) / prevValue * 100) : 0; 
+          return { ...item, comparison: change.toFixed(1) }; 
+        } 
+        return { ...item, comparison: null }; 
+      }); 
+    } else if (comparisonMode === 'wow') { 
+      comparisonData = withMovingAvg.map((item, idx) => { 
+        const prevWeekIdx = idx - 7; 
+        if (prevWeekIdx >= 0) { 
+          const prevValue = currentData[prevWeekIdx][selectedMetric]; 
+          const change = prevValue ? ((item[selectedMetric] - prevValue) / prevValue * 100) : 0; 
+          return { ...item, comparison: change.toFixed(1) }; 
+        } 
+        return { ...item, comparison: null }; 
+      }); 
+    } 
+     
+    // Calculate summary stats 
+    const isCumulative = selectedMetric === 'followers_cumulative';
+    const total = isCumulative 
+      ? currentData[currentData.length - 1][selectedMetric]
+      : currentData.reduce((sum, d) => sum + d[selectedMetric], 0); 
+    const avg = isCumulative
+      ? currentData.reduce((sum, d) => sum + d[selectedMetric], 0) / currentData.length
+      : total / currentData.length; 
+    const max = Math.max(...currentData.map(d => d[selectedMetric])); 
+    const min = Math.min(...currentData.map(d => d[selectedMetric])); 
+     
+    // Calculate trend (simple linear regression) 
+    const n = currentData.length; 
+    const xSum = currentData.reduce((sum, d, idx) => sum + idx, 0); 
+    const ySum = currentData.reduce((sum, d) => sum + d[selectedMetric], 0); 
+    const xySum = currentData.reduce((sum, d, idx) => sum + (idx * d[selectedMetric]), 0); 
+    const x2Sum = currentData.reduce((sum, d, idx) => sum + (idx * idx), 0); 
+    const slope = (n * xySum - xSum * ySum) / (n * x2Sum - xSum * xSum); 
+    const trendDirection = slope > 0 ? 'up' : slope < 0 ? 'down' : 'flat'; 
+    const trendPercentage = (slope / (avg || 1) * 100).toFixed(2); 
+     
+    return { 
+      data: comparisonData, 
+      stats: { 
+        total: Math.round(total * 10) / 10, 
+        avg: Math.round(avg * 10) / 10, 
+        max, 
+        min, 
+        trendDirection, 
+        trendPercentage 
+      } 
+    }; 
+  }, [dateRange, selectedMetric, movingAvgPeriod, comparisonMode, rawData]); 
+ 
+  // Metric Card Component 
+  const MetricCard = ({ title, value, change, icon: Icon, color }) => ( 
+    <div className="bg-white dark:bg-[#1a202c] rounded-xl p-6 border border-[#dbdfe6] dark:border-[#2d3748] transition-all hover:border-primary/50 shadow-sm"> 
+      <div className="flex items-start justify-between mb-4"> 
+        <div className={`p-3 rounded-xl ${color}`}> 
+          <Icon size={24} className="text-white" /> 
+        </div> 
+        {change !== null && !isNaN(change) && ( 
+          <div className={`flex items-center gap-1 text-sm font-bold ${parseFloat(change) >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}> 
+            {parseFloat(change) >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />} 
+            {Math.abs(change)}% 
+          </div> 
+        )} 
+      </div> 
+      <div className="text-slate-500 dark:text-gray-400 text-sm mb-1 font-medium uppercase tracking-wider">{title}</div> 
+      <div className="text-3xl font-bold text-[#111318] dark:text-white">{value.toLocaleString()}</div> 
+    </div> 
+  ); 
+ 
+  return ( 
+    <div className="max-w-[1200px] mx-auto px-6 py-8"> 
+      {/* Header */} 
+      <div className="mb-8"> 
+        <div className="flex items-center justify-between mb-6"> 
+          <div> 
+            <h1 className="text-4xl font-black text-[#111318] dark:text-white mb-2 uppercase tracking-tight"> 
+              Time Intelligence 
+            </h1> 
+            <p className="text-[#616f89] dark:text-gray-400 text-lg">Advanced temporal analytics for AFSUG performance</p> 
+          </div> 
+          <div className="flex items-center gap-3"> 
+            <button  
+              onClick={() => setIsLive(!isLive)} 
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 font-bold transition-all border ${isLive ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' : 'bg-gray-100 dark:bg-gray-800 text-slate-500 border-transparent hover:text-primary'}`} 
+            > 
+              {isLive ? <><PauseCircle size={18} />LIVE</> : <><PlayCircle size={18} />PAUSED</>} 
+            </button> 
+            <button className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-2 text-slate-500 hover:text-primary font-bold transition-all border border-transparent"> 
+              <RefreshCw size={18} /> 
+              REFRESH 
+            </button> 
+          </div> 
+        </div> 
+ 
+        {/* Control Panel */} 
+        <div className="bg-white dark:bg-[#1a202c] border border-[#dbdfe6] dark:border-[#2d3748] rounded-xl p-6 shadow-sm"> 
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"> 
+            {/* Date Range Selector */} 
+            <div> 
+              <label className="text-slate-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider mb-2 block">Time Period</label> 
+              <select  
+                value={dateRange} 
+                onChange={(e) => setDateRange(e.target.value)} 
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-[#111318] dark:text-white font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
+              > 
+                <option value="last7">Last 7 Days</option> 
+                <option value="last30">Last 30 Days</option> 
+                <option value="last90">Last 90 Days</option> 
+                <option value="all">All Time</option> 
+              </select> 
+            </div> 
+ 
+            {/* Metric Selector */} 
+            <div> 
+              <label className="text-slate-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider mb-2 block">Metric</label> 
+              <select  
+                value={selectedMetric} 
+                onChange={(e) => setSelectedMetric(e.target.value)} 
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-[#111318] dark:text-white font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
+              > 
+                <option value="impressions">Impressions</option> 
+                <option value="engagement">Total Engagement</option> 
+                <option value="clicks">Clicks</option> 
+                <option value="reactions">Reactions</option> 
+                <option value="comments">Comments</option> 
+                <option value="reposts">Reposts</option> 
+                <option value="followers_daily">New Followers</option> 
+                <option value="followers_cumulative">Total Followers</option> 
+              </select> 
+            </div> 
+ 
+            {/* Comparison Mode */} 
+            <div> 
+              <label className="text-slate-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider mb-2 block">Comparison</label> 
+              <select  
+                value={comparisonMode} 
+                onChange={(e) => setComparisonMode(e.target.value)} 
+                className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 text-[#111318] dark:text-white font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
+              > 
+                <option value="none">None</option> 
+                <option value="wow">Week-over-Week</option> 
+                <option value="mom">Month-over-Month</option> 
+              </select> 
+            </div> 
+ 
+            {/* Moving Average Period */} 
+            <div> 
+              <label className="text-slate-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider mb-2 block">Moving Avg ({movingAvgPeriod}d)</label> 
+              <input  
+                type="range" 
+                min="3" 
+                max="30" 
+                value={movingAvgPeriod} 
+                onChange={(e) => setMovingAvgPeriod(parseInt(e.target.value))} 
+                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary mt-4" 
+              /> 
+            </div> 
+          </div> 
+        </div> 
+      </div> 
+ 
+      {/* Summary Stats Cards */} 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"> 
+        <MetricCard  
+          title="Total" 
+          value={timeMetrics.stats.total} 
+          change={null} 
+          icon={BarChart3} 
+          color="bg-blue-500" 
+        /> 
+        <MetricCard  
+          title="Average" 
+          value={timeMetrics.stats.avg} 
+          change={null} 
+          icon={Activity} 
+          color="bg-purple-500" 
+        /> 
+        <MetricCard  
+          title="Peak" 
+          value={timeMetrics.stats.max} 
+          change={null} 
+          icon={TrendingUp} 
+          color="bg-emerald-500" 
+        /> 
+        <MetricCard  
+          title="Trend" 
+          value={`${timeMetrics.stats.trendPercentage}%`} 
+          change={timeMetrics.stats.trendPercentage} 
+          icon={Zap} 
+          color="bg-orange-500" 
+        /> 
+      </div> 
+ 
+      {/* Main Chart */} 
+      <div className="bg-white dark:bg-[#1a202c] border border-[#dbdfe6] dark:border-[#2d3748] rounded-xl p-8 shadow-sm mb-8"> 
+        <div className="flex items-center justify-between mb-8"> 
+          <div> 
+            <h2 className="text-2xl font-bold text-[#111318] dark:text-white mb-1">Temporal Analysis</h2> 
+            <p className="text-[#616f89] dark:text-gray-400 text-sm"> 
+              {selectedMetric.replace('_', ' ').charAt(0).toUpperCase() + selectedMetric.replace('_', ' ').slice(1)} over time with {movingAvgPeriod}-day moving average 
+            </p> 
+          </div> 
+          <div className="flex items-center gap-3"> 
+            <button  
+              onClick={() => setShowTrendline(!showTrendline)} 
+              className={`px-4 py-2 rounded-lg font-bold text-xs transition-all border ${showTrendline ? 'bg-primary/10 text-primary border-primary/30' : 'bg-gray-100 dark:bg-gray-800 text-slate-500 border-transparent'}`} 
+            > 
+              MOVING AVG 
+            </button> 
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs bg-gray-100 dark:bg-gray-800 text-slate-500 hover:text-primary transition-all"> 
+              <Download size={14} /> 
+              EXPORT 
+            </button> 
+          </div> 
+        </div> 
+         
+        <div className="h-[400px]"> 
+          <ResponsiveContainer width="100%" height="100%"> 
+            <ComposedChart data={timeMetrics.data}> 
+              <defs> 
+                <linearGradient id="colorMetric" x1="0" y1="0" x2="0" y2="1"> 
+                  <stop offset="5%" stopColor="#135bec" stopOpacity={0.2}/> 
+                  <stop offset="95%" stopColor="#135bec" stopOpacity={0}/> 
+                </linearGradient> 
+              </defs> 
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" vertical={false} /> 
+              <XAxis  
+                dataKey="displayDate"  
+                stroke="#94a3b8"  
+                style={{ fontSize: '12px', fontWeight: '600' }} 
+                axisLine={false} 
+                tickLine={false} 
+              /> 
+              <YAxis  
+                stroke="#94a3b8"  
+                style={{ fontSize: '12px', fontWeight: '600' }}  
+                axisLine={false} 
+                tickLine={false} 
+                tickFormatter={(val) => val >= 1000 ? `${(val/1000).toFixed(1)}K` : val} 
+              /> 
+              <Tooltip  
+                contentStyle={{  
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',  
+                  border: '1px solid #dbdfe6', 
+                  borderRadius: '12px', 
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' 
+                }} 
+                labelStyle={{ color: '#111318', fontWeight: '800', marginBottom: '8px' }} 
+              /> 
+              <Legend verticalAlign="top" height={36}/> 
+              <Area  
+                type="monotone"  
+                dataKey={selectedMetric}  
+                fill="url(#colorMetric)"  
+                stroke="#135bec"  
+                strokeWidth={3} 
+                name={selectedMetric.replace('_', ' ')} 
+                dot={false} 
+                activeDot={{ r: 6, strokeWidth: 0 }} 
+              /> 
+              {showTrendline && ( 
+                <Line  
+                  type="monotone"  
+                  dataKey="movingAvg"  
+                  stroke="#8b5cf6"  
+                  strokeWidth={2} 
+                  strokeDasharray="5 5" 
+                  dot={false} 
+                  name={`${movingAvgPeriod}d Moving Avg`} 
+                /> 
+              )} 
+            </ComposedChart> 
+          </ResponsiveContainer> 
+        </div> 
+      </div> 
+ 
+      {/* Distribution & Insights */} 
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8"> 
+        <div className="bg-white dark:bg-[#1a202c] border border-[#dbdfe6] dark:border-[#2d3748] rounded-xl p-8 shadow-sm"> 
+          <h3 className="text-xl font-bold text-[#111318] dark:text-white mb-6">Volume Distribution</h3> 
+          <div className="h-64"> 
+            <ResponsiveContainer width="100%" height="100%"> 
+              <BarChart data={timeMetrics.data.slice(-15)}> 
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" vertical={false} /> 
+                <XAxis dataKey="displayDate" stroke="#94a3b8" style={{ fontSize: '10px' }} axisLine={false} tickLine={false} /> 
+                <YAxis stroke="#94a3b8" style={{ fontSize: '10px' }} axisLine={false} tickLine={false} /> 
+                <Tooltip cursor={{fill: 'rgba(19, 91, 236, 0.05)'}} /> 
+                <Bar dataKey={selectedMetric} fill="#135bec" radius={[4, 4, 0, 0]} /> 
+              </BarChart> 
+            </ResponsiveContainer> 
+          </div> 
+        </div> 
+ 
+        <div className="bg-white dark:bg-[#1a202c] border border-[#dbdfe6] dark:border-[#2d3748] rounded-xl p-8 shadow-sm"> 
+          <h3 className="text-xl font-bold text-[#111318] dark:text-white mb-6">Temporal Insights</h3> 
+          <div className="space-y-4"> 
+            <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700"> 
+              <div className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg"> 
+                <Target size={20} /> 
+              </div> 
+              <div> 
+                <p className="text-xs font-bold text-slate-500 uppercase">Maximum Recorded</p> 
+                <p class="text-lg font-black text-[#111318] dark:text-white">{timeMetrics.stats.max.toLocaleString()} <span class="text-sm font-normal text-slate-500">at peak</span></p> 
+              </div> 
+            </div> 
+            <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700"> 
+              <div className="p-2 bg-blue-500/10 text-blue-500 rounded-lg"> 
+                <Activity size={20} /> 
+              </div> 
+              <div> 
+                <p className="text-xs font-bold text-slate-500 uppercase">Average Daily Rate</p> 
+                <p class="text-lg font-black text-[#111318] dark:text-white">{timeMetrics.stats.avg.toLocaleString()} <span class="text-sm font-normal text-slate-500">per day</span></p> 
+              </div> 
+            </div> 
+            <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700"> 
+              <div className="p-2 bg-purple-500/10 text-purple-500 rounded-lg"> 
+                <TrendingUp size={20} /> 
+              </div> 
+              <div> 
+                <p className="text-xs font-bold text-slate-500 uppercase">Trajectory</p> 
+                <p class="text-lg font-black text-[#111318] dark:text-white">{timeMetrics.stats.trendDirection.toUpperCase()} <span class="text-sm font-normal text-slate-500">({timeMetrics.stats.trendPercentage}%)</span></p> 
+              </div> 
+            </div> 
+          </div> 
+        </div> 
+      </div> 
+    </div> 
+  ); 
+}; 
+ 
+const root = createRoot(document.getElementById('time-intelligence-root')); 
+root.render(<TimeIntelligenceDashboard />); 
+</script>
+
+    <!-- Footer -->
+    <footer class="border-t border-[#dbdfe6] dark:border-[#2d3748] bg-white dark:bg-[#1a202c] py-6 px-10">
+        <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[#616f89]">
+            <p>© 2026 African SAP User Group (AFSUG). All rights reserved.</p>
+            <div class="flex gap-6">
+                <a class="hover:text-primary transition-colors" href="#">Data Privacy</a>
+                <a class="hover:text-primary transition-colors" href="#">Platform Terms</a>
+                <a class="hover:text-primary transition-colors" href="#">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script id="dashboard-data">
+        window.dashboardData = {
+    "summary": {
+        "total_followers": 4411,
+        "follower_growth_pct": 4.0,
+        "total_impressions": 98521,
+        "total_engagements": 3247,
+        "total_clicks": 2858,
+        "total_reactions": 352,
+        "total_comments": 16,
+        "total_reposts": 21,
+        "engagement_rate": 3.3
+    },
+    "trends": {
+        "dates": [
+            "10/15/2025",
+            "10/16/2025",
+            "10/17/2025",
+            "10/18/2025",
+            "10/19/2025",
+            "10/20/2025",
+            "10/21/2025",
+            "10/22/2025",
+            "10/23/2025",
+            "10/24/2025",
+            "10/25/2025",
+            "10/26/2025",
+            "10/27/2025",
+            "10/28/2025",
+            "10/29/2025",
+            "10/30/2025",
+            "10/31/2025",
+            "11/01/2025",
+            "11/02/2025",
+            "11/03/2025",
+            "11/04/2025",
+            "11/05/2025",
+            "11/06/2025",
+            "11/07/2025",
+            "11/08/2025",
+            "11/09/2025",
+            "11/10/2025",
+            "11/11/2025",
+            "11/12/2025",
+            "11/13/2025",
+            "11/14/2025",
+            "11/15/2025",
+            "11/16/2025",
+            "11/17/2025",
+            "11/18/2025",
+            "11/19/2025",
+            "11/20/2025",
+            "11/21/2025",
+            "11/22/2025",
+            "11/23/2025",
+            "11/24/2025",
+            "11/25/2025",
+            "11/26/2025",
+            "11/27/2025",
+            "11/28/2025",
+            "11/29/2025",
+            "11/30/2025",
+            "12/01/2025",
+            "12/02/2025",
+            "12/03/2025",
+            "12/04/2025",
+            "12/05/2025",
+            "12/06/2025",
+            "12/07/2025",
+            "12/08/2025",
+            "12/09/2025",
+            "12/10/2025",
+            "12/11/2025",
+            "12/12/2025",
+            "12/13/2025",
+            "12/14/2025",
+            "12/15/2025",
+            "12/16/2025",
+            "12/17/2025",
+            "12/18/2025",
+            "12/19/2025",
+            "12/20/2025",
+            "12/21/2025",
+            "12/22/2025",
+            "12/23/2025",
+            "12/24/2025",
+            "12/25/2025",
+            "12/26/2025",
+            "12/27/2025",
+            "12/28/2025",
+            "12/29/2025",
+            "12/30/2025",
+            "12/31/2025",
+            "01/01/2026",
+            "01/02/2026",
+            "01/03/2026",
+            "01/04/2026",
+            "01/05/2026",
+            "01/06/2026",
+            "01/07/2026",
+            "01/08/2026",
+            "01/09/2026",
+            "01/10/2026",
+            "01/11/2026",
+            "01/12/2026"
+        ],
+        "impressions": [
+            570,
+            169,
+            182,
+            85,
+            84,
+            906,
+            770,
+            308,
+            205,
+            345,
+            80,
+            95,
+            197,
+            189,
+            206,
+            746,
+            426,
+            182,
+            72,
+            378,
+            159,
+            356,
+            213,
+            144,
+            101,
+            61,
+            782,
+            293,
+            233,
+            290,
+            274,
+            112,
+            182,
+            343,
+            167,
+            166,
+            319,
+            118,
+            61,
+            90,
+            101,
+            195,
+            1119,
+            346,
+            116,
+            73,
+            44,
+            174,
+            59,
+            64,
+            7787,
+            10812,
+            6863,
+            5271,
+            10269,
+            9676,
+            9024,
+            2400,
+            1882,
+            2473,
+            3466,
+            3921,
+            3682,
+            4436,
+            44,
+            35,
+            18,
+            14,
+            27,
+            35,
+            41,
+            28,
+            43,
+            15,
+            27,
+            31,
+            28,
+            251,
+            168,
+            221,
+            193,
+            197,
+            272,
+            268,
+            871,
+            176,
+            142,
+            80,
+            54,
+            330
+        ],
+        "engagement": [
+            32,
+            15,
+            16,
+            7,
+            8,
+            93,
+            51,
+            25,
+            25,
+            23,
+            2,
+            2,
+            6,
+            8,
+            7,
+            118,
+            23,
+            20,
+            0,
+            17,
+            7,
+            14,
+            14,
+            3,
+            7,
+            3,
+            144,
+            23,
+            17,
+            17,
+            25,
+            32,
+            21,
+            30,
+            46,
+            7,
+            27,
+            3,
+            19,
+            2,
+            0,
+            27,
+            98,
+            13,
+            5,
+            1,
+            1,
+            7,
+            2,
+            3,
+            44,
+            28,
+            47,
+            40,
+            115,
+            32,
+            117,
+            125,
+            103,
+            211,
+            250,
+            285,
+            272,
+            315,
+            1,
+            0,
+            1,
+            1,
+            3,
+            4,
+            5,
+            2,
+            3,
+            0,
+            3,
+            2,
+            -1,
+            3,
+            1,
+            15,
+            5,
+            9,
+            5,
+            10,
+            32,
+            6,
+            5,
+            6,
+            0,
+            26
+        ],
+        "clicks": [
+            20,
+            11,
+            14,
+            3,
+            6,
+            65,
+            34,
+            20,
+            20,
+            8,
+            0,
+            1,
+            4,
+            6,
+            4,
+            92,
+            15,
+            15,
+            0,
+            10,
+            3,
+            8,
+            7,
+            2,
+            7,
+            3,
+            125,
+            20,
+            15,
+            9,
+            23,
+            32,
+            20,
+            23,
+            42,
+            6,
+            12,
+            0,
+            17,
+            1,
+            0,
+            26,
+            57,
+            3,
+            1,
+            0,
+            1,
+            4,
+            0,
+            2,
+            35,
+            26,
+            47,
+            36,
+            110,
+            28,
+            115,
+            122,
+            99,
+            210,
+            250,
+            277,
+            270,
+            314,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            2,
+            0,
+            2,
+            1,
+            12,
+            5,
+            9,
+            4,
+            7,
+            27,
+            3,
+            3,
+            3,
+            0,
+            20
+        ],
+        "reactions": [
+            7,
+            2,
+            2,
+            3,
+            2,
+            23,
+            16,
+            5,
+            5,
+            14,
+            2,
+            1,
+            1,
+            2,
+            2,
+            25,
+            7,
+            5,
+            0,
+            7,
+            4,
+            4,
+            7,
+            1,
+            0,
+            0,
+            16,
+            3,
+            2,
+            8,
+            2,
+            0,
+            1,
+            7,
+            4,
+            1,
+            11,
+            3,
+            2,
+            1,
+            0,
+            1,
+            41,
+            10,
+            4,
+            1,
+            0,
+            3,
+            2,
+            0,
+            7,
+            2,
+            0,
+            3,
+            5,
+            1,
+            1,
+            3,
+            4,
+            1,
+            0,
+            8,
+            2,
+            1,
+            0,
+            0,
+            1,
+            1,
+            2,
+            3,
+            5,
+            1,
+            3,
+            0,
+            2,
+            0,
+            0,
+            1,
+            0,
+            3,
+            0,
+            0,
+            1,
+            3,
+            5,
+            2,
+            2,
+            3,
+            0,
+            6
+        ],
+        "comments": [
+            4,
+            1,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "reposts": [
+            1,
+            1,
+            0,
+            1,
+            0,
+            2,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0
+        ],
+        "followers_daily": [
+            2,
+            2,
+            2,
+            1,
+            0,
+            4,
+            2,
+            -1,
+            2,
+            3,
+            0,
+            1,
+            1,
+            3,
+            1,
+            2,
+            3,
+            1,
+            0,
+            1,
+            2,
+            4,
+            2,
+            2,
+            1,
+            0,
+            1,
+            1,
+            2,
+            3,
+            0,
+            0,
+            1,
+            1,
+            1,
+            3,
+            6,
+            0,
+            2,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            4,
+            1,
+            2,
+            2,
+            3,
+            2,
+            3,
+            4,
+            6,
+            4,
+            8,
+            8,
+            4,
+            9,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            3,
+            1,
+            1,
+            7,
+            4,
+            2,
+            7,
+            4,
+            3,
+            1,
+            2,
+            1,
+            0
+        ],
+        "follower_dates": [
+            "10/15/2025",
+            "10/16/2025",
+            "10/17/2025",
+            "10/18/2025",
+            "10/19/2025",
+            "10/20/2025",
+            "10/21/2025",
+            "10/22/2025",
+            "10/23/2025",
+            "10/24/2025",
+            "10/25/2025",
+            "10/26/2025",
+            "10/27/2025",
+            "10/28/2025",
+            "10/29/2025",
+            "10/30/2025",
+            "10/31/2025",
+            "11/01/2025",
+            "11/02/2025",
+            "11/03/2025",
+            "11/04/2025",
+            "11/05/2025",
+            "11/06/2025",
+            "11/07/2025",
+            "11/08/2025",
+            "11/09/2025",
+            "11/10/2025",
+            "11/11/2025",
+            "11/12/2025",
+            "11/13/2025",
+            "11/14/2025",
+            "11/15/2025",
+            "11/16/2025",
+            "11/17/2025",
+            "11/18/2025",
+            "11/19/2025",
+            "11/20/2025",
+            "11/21/2025",
+            "11/22/2025",
+            "11/23/2025",
+            "11/24/2025",
+            "11/25/2025",
+            "11/26/2025",
+            "11/27/2025",
+            "11/28/2025",
+            "11/29/2025",
+            "11/30/2025",
+            "12/01/2025",
+            "12/02/2025",
+            "12/03/2025",
+            "12/04/2025",
+            "12/05/2025",
+            "12/06/2025",
+            "12/07/2025",
+            "12/08/2025",
+            "12/09/2025",
+            "12/10/2025",
+            "12/11/2025",
+            "12/12/2025",
+            "12/13/2025",
+            "12/14/2025",
+            "12/15/2025",
+            "12/16/2025",
+            "12/17/2025",
+            "12/18/2025",
+            "12/19/2025",
+            "12/20/2025",
+            "12/21/2025",
+            "12/22/2025",
+            "12/23/2025",
+            "12/24/2025",
+            "12/25/2025",
+            "12/26/2025",
+            "12/27/2025",
+            "12/28/2025",
+            "12/29/2025",
+            "12/30/2025",
+            "12/31/2025",
+            "01/01/2026",
+            "01/02/2026",
+            "01/03/2026",
+            "01/04/2026",
+            "01/05/2026",
+            "01/06/2026",
+            "01/07/2026",
+            "01/08/2026",
+            "01/09/2026",
+            "01/10/2026",
+            "01/11/2026",
+            "01/12/2026"
+        ],
+        "followers_cumulative": [
+            4245,
+            4247,
+            4249,
+            4250,
+            4250,
+            4254,
+            4256,
+            4255,
+            4257,
+            4260,
+            4260,
+            4261,
+            4262,
+            4265,
+            4266,
+            4268,
+            4271,
+            4272,
+            4272,
+            4273,
+            4275,
+            4279,
+            4281,
+            4283,
+            4284,
+            4284,
+            4285,
+            4286,
+            4288,
+            4291,
+            4291,
+            4291,
+            4292,
+            4293,
+            4294,
+            4297,
+            4303,
+            4303,
+            4305,
+            4306,
+            4306,
+            4307,
+            4307,
+            4308,
+            4308,
+            4308,
+            4308,
+            4311,
+            4311,
+            4311,
+            4315,
+            4316,
+            4318,
+            4320,
+            4323,
+            4325,
+            4328,
+            4332,
+            4338,
+            4342,
+            4350,
+            4358,
+            4362,
+            4371,
+            4372,
+            4372,
+            4372,
+            4372,
+            4372,
+            4373,
+            4373,
+            4373,
+            4373,
+            4373,
+            4374,
+            4375,
+            4375,
+            4378,
+            4379,
+            4380,
+            4387,
+            4391,
+            4393,
+            4400,
+            4404,
+            4407,
+            4408,
+            4410,
+            4411,
+            4411
+        ]
+    },
+    "top_posts": [
+        {
+            "Post title": "\ud835\uddd4\ud835\uddd9\ud835\udde6\ud835\udde8\ud835\uddda \ud835\udde0\ud835\uddf2\ud835\uddfa\ud835\uddef\ud835\uddf2\ud835\uddff\ud835\ude00\ud835\uddf5\ud835\uddf6\ud835\uddfd \ud835\udde5\ud835\uddf2\ud835\uddfb\ud835\uddf2\ud835\ude04\ud835\uddee\ud835\uddf9\ud835\ude00 \ud835\uddf3\ud835\uddfc\ud835\uddff 2026 \ud835\uddd4\ud835\uddff\ud835\uddf2 \ud835\udde1\ud835\uddfc\ud835\ude04 \ud835\udde2\ud835\uddfd\ud835\uddf2\ud835\uddfb!\n\nAt the \ud835\uddd4\ud835\uddf3\ud835\uddff\ud835\uddf6\ud835\uddf0\ud835\uddee\ud835\uddfb \ud835\udde6\ud835\uddd4\ud835\udde3 \ud835\udde8\ud835\ude00\ud835\uddf2\ud835\uddff \ud835\uddda\ud835\uddff\ud835\uddfc\ud835\ude02\ud835\uddfd (\ud835\uddd4\ud835\uddd9\ud835\udde6\ud835\udde8\ud835\uddda), we believe in the \ud835\uddfd\ud835\uddfc\ud835\ude04\ud835\uddf2\ud835\uddff \ud835\uddfc\ud835\uddf3 \ud835\uddf0\ud835\uddfc\ud835\uddfa\ud835\uddfa\ud835\ude02\ud835\uddfb\ud835\uddf6\ud835\ude01\ud835\ude06 - where learning, collaboration, and shared innovation turn knowledge into real transformation.\n\nAs we prepare for another exciting year of \ud835\uddf4\ud835\uddff\ud835\uddfc\ud835\ude04\ud835\ude01\ud835\uddf5, \ud835\uddf0\ud835\uddfc\ud835\uddfb\ud835\uddfb\ud835\uddf2\ud835\uddf0\ud835\ude01\ud835\uddf6\ud835\uddfc\ud835\uddfb, \ud835\uddee\ud835\uddfb\ud835\uddf1 \ud835\uddf6\ud835\uddfb\ud835\ude00\ud835\uddf6\ud835\uddf4\ud835\uddf5\ud835\ude01-\ud835\ude00\ud835\uddf5\ud835\uddee\ud835\uddff\ud835\uddf6\ud835\uddfb\ud835\uddf4, we\u2019re inviting:\n\u2022 Our valued members to \ud835\uddff\ud835\uddf2\ud835\uddfb\ud835\uddf2\ud835\ude04 \ud835\ude01\ud835\uddf5\ud835\uddf2\ud835\uddf6\ud835\uddff \ud835\uddfa\ud835\uddf2\ud835\uddfa\ud835\uddef\ud835\uddf2\ud835\uddff\ud835\ude00\ud835\uddf5\ud835\uddf6\ud835\uddfd\ud835\ude00 \ud835\uddf3\ud835\uddfc\ud835\uddff 2026, and\n\u2022 New SAP customers and partners to \ud835\uddf7\ud835\uddfc\ud835\uddf6\ud835\uddfb \ud835\ude01\ud835\uddf5\ud835\uddf6\ud835\ude00 \ud835\uddf4\ud835\uddff\ud835\uddfc\ud835\ude04\ud835\uddf6\ud835\uddfb\ud835\uddf4 \ud835\uddd4\ud835\uddf3\ud835\uddff\ud835\uddf6\ud835\uddf0\ud835\uddee\ud835\uddfb \ud835\udde6\ud835\uddd4\ud835\udde3 \ud835\uddf0\ud835\uddfc\ud835\uddfa\ud835\uddfa\ud835\ude02\ud835\uddfb\ud835\uddf6\ud835\ude01\ud835\ude06.\n\nYour AFSUG membership gives your team access to:\n\u2022 Real-world SAP insights and education\n\u2022 Peer-to-peer learning through our Special Interest Groups (SIGs)\n\u2022 Exclusive events, workshops, and community collaborations\n\u2022 A network of professionals driving digital transformation across Africa\n\nTo join or renew your membership, please connect with our team:\n\ud83d\udce7 amanda.gibbs@afsug.com\n\ud83d\udce7 genevieve.myburgh@afsug.com\nVisit www.afsug.com to learn more.\n\ud835\uddd6\ud835\uddfc\ud835\uddfb\ud835\uddfb\ud835\uddf2\ud835\uddf0\ud835\ude01.\ud835\uddd6\ud835\uddff\ud835\uddf2\ud835\uddee\ud835\ude01\ud835\uddf2.\ud835\uddd6\ud835\uddfc\ud835\uddf9\ud835\uddf9\ud835\uddee\ud835\uddef\ud835\uddfc\ud835\uddff\ud835\uddee\ud835\ude01\ud835\uddf2. \ud835\udde7\ud835\uddfc\ud835\uddf4\ud835\uddf2\ud835\ude01\ud835\uddf5\ud835\uddf2\ud835\uddff!\n\n#AFSUG #SAPHILA2025 #SAPCommunity #ConnectCreateCollaborate #DigitalTransformation #AFRICA",
+            "Engagement rate": 0.26295584440231323
+        },
+        {
+            "Post title": "AFSUG x SAPUGZ Collaboration\n\nWe\u2019are proud to announce that the African SAP User Group (AFSUG) and the SAP User Group Zimbabwe (SAPUGZ) have officially signed a collaboration agreement!\n\nA heartfelt thank you to Gloria Chamboko and the SAPUGZ team for inviting us to attend this fantastic event, hosted at the beautiful Elephant Hills Resort in Victoria Falls. With around 100 attendees representing various companies across Zimbabwe, it was an inspiring gathering of passionate SAP professionals - surrounded by magnificent views and a true spirit of collaboration.\n\nAFSUG has proudly supported SAPUGZ over the past four years, sending experts and speakers to their events. With this new two-year collaboration agreement, we\u2019re excited to continue helping the team grow, connect, and bring more value to their members through shared events, expertise, and opportunities.\n\nThis marks the beginning of a new chapter for the SAP community in Zimbabwe - strengthening our African SAP family and driving collaboration across borders.\nThank you to the AFSUG team for the wonderful support - Amanda G., Dion Kalicharan, Tracey Keene, Genevieve Myburgh\n\n#AFSUG #SAPUGZ #SAPHILA #SAPCommunity #Collaboration #ConnectCreateCollaborate #VictoriaFalls",
+            "Engagement rate": 0.23116883635520935
+        },
+        {
+            "Post title": "\ud835\uddd4\ud835\uddd9\ud835\udde6\ud835\udde8\ud835\uddda \ud835\udde3\ud835\uddff\ud835\uddfc\ud835\ude02\ud835\uddf1\ud835\uddf9\ud835\ude06 \ud835\udde6\ud835\uddfd\ud835\uddfc\ud835\uddfb\ud835\ude00\ud835\uddfc\ud835\uddff\ud835\ude00 \ud835\ude01\ud835\uddf5\ud835\uddf2 \ud835\udded\ud835\uddf6\ud835\uddfa\ud835\uddef\ud835\uddee\ud835\uddef\ud835\ude04\ud835\uddf2 \ud835\udde6\ud835\uddd4\ud835\udde3 \ud835\udde8\ud835\ude00\ud835\uddf2\ud835\uddff \ud835\uddda\ud835\uddff\ud835\uddfc\ud835\ude02\ud835\uddfd \ud835\uddd8\ud835\ude03\ud835\uddf2\ud835\uddfb\ud835\ude01 \u2013 4\ud835\ude01\ud835\uddf5 \ud835\uddd6\ud835\uddfc\ud835\uddfb\ud835\ude00\ud835\uddf2\ud835\uddf0\ud835\ude02\ud835\ude01\ud835\uddf6\ud835\ude03\ud835\uddf2 \ud835\uddec\ud835\uddf2\ud835\uddee\ud835\uddff!\n\nAFSUG is proud to continue supporting the SAP community in Zimbabwe as a sponsor for the fourth consecutive year.\n\nThis year, we bring inspiring speakers from our AFSUG community:\n\u2022 Mudzunga Masakona \u2013 Group Head of Business IT Development at AECI\n\u2022 Dion Kalicharan \u2013 Managing Director at Consnet and AFSUG Board Member\n\u2022 Eugene Ras \u2013\u00a0Head of Data Analytics at Heineken\n\u2022 Amanda G. \u2013 CEO of AFSUG \n\nUnder the theme \u201c\ud835\udde7\ud835\uddf5\ud835\uddf2 \ud835\udde6\ud835\uddd4\ud835\udde3 \ud835\uddd9\ud835\ude02\ud835\ude01\ud835\ude02\ud835\uddff\ud835\uddf2 \ud835\udddc\ud835\ude00 \ud835\udddb\ud835\uddf2\ud835\uddff\ud835\uddf2: \ud835\udddc\ud835\uddfb\ud835\ude01\ud835\uddf2\ud835\uddff\ud835\uddf0\ud835\uddfc\ud835\uddfb\ud835\uddfb\ud835\uddf2\ud835\uddf0\ud835\ude01\ud835\uddf6\ud835\uddfc\ud835\uddfb\ud835\ude00 \ud835\uddf3\ud835\uddfc\ud835\uddff \ud835\udddd\ud835\uddfc\ud835\ude02\ud835\uddff\ud835\uddfb\ud835\uddf2\ud835\ude06\ud835\uddf6\ud835\uddfb\ud835\uddf4 \ud835\uddd9\ud835\uddfc\ud835\uddff\ud835\ude04\ud835\uddee\ud835\uddff\ud835\uddf1,\u201d the Zimbabwe SAP User Group is starting to strengthen its local network of SAP professionals and customers. #sugzw\n\nAFSUG is proud to stand alongside this growing community \u2014 \ud835\uddf5\ud835\uddf2\ud835\uddf9\ud835\uddfd\ud835\uddf6\ud835\uddfb\ud835\uddf4 \ud835\uddfa\ud835\uddf2\ud835\uddfa\ud835\uddef\ud835\uddf2\ud835\uddff\ud835\ude00 \ud835\uddf9\ud835\uddf2\ud835\uddee\ud835\uddff\ud835\uddfb, \ud835\uddf4\ud835\uddff\ud835\uddfc\ud835\ude04, \ud835\uddee\ud835\uddfb\ud835\uddf1 \ud835\ude00\ud835\uddf5\ud835\uddee\ud835\uddff\ud835\uddf2 \ud835\uddf8\ud835\uddfb\ud835\uddfc\ud835\ude04\ud835\uddf9\ud835\uddf2\ud835\uddf1\ud835\uddf4\ud835\uddf2 across Africa\u2019s SAP ecosystem.\n\n#AFSUG #SAPCommunity #sugzw #SAP #AFSUGAfrica #Collaboration #KnowledgeSharing #Growth",
+            "Engagement rate": 0.18217821419239044
+        },
+        {
+            "Post title": "Why join AFSUG?\nAfrica\u2019s independent SAP community \u2014 connecting people, sharing knowledge, and enabling growth.\n\nExclusive Access & Networking\nEngage directly with C-suite leaders, programme owners, functional specialists, and technical experts from across Africa\u2014building meaningful relationships that accelerate collaboration and transformation.\n\nKnowledge Sharing Through SIGs\nJoin our Special Interest Groups (SIGs) to exchange practical insights, tackle real-world challenges, explore best practices, and stay ahead of the latest SAP innovations.\n\nRoadmaps & Strategic Insight Sessions\nGain direct access to SAP roadmap briefings, expert product discussions, and platform evolution sessions designed to support strategic decision-making and long-term planning.\n\nEvents & Community Engagement\nTake part in 50+ events annually\u2014including SAPHILA, AFSUG\u2019s premier biennial SAP user conference\u2014connecting you to the broader SAP community across the continent. \n\nBe part of Africa\u2019s leading SAP community.\nJoin AFSUG today: https://lnkd.in/dr2Yi-na\n\n#AFSUG #AFSUGCommunity #SAPUsersAfrica\n#SAP #SAPCommunity #SAPS4HANA #SAPBTP\n#DigitalTransformation #ERP #EnterpriseTechnology\n#TechAfrica #AfricaBusiness",
+            "Engagement rate": 0.16309012472629547
+        },
+        {
+            "Post title": "An Executive Roundtable not to be missed. Please join us for a Face-to-face event at the SAP Woodmead.  Register today. ",
+            "Engagement rate": 0.1325301229953766
+        }
+    ],
+    "demographics": {
+        "Location": [
+            {
+                "Location": "Johannesburg Metropolitan Area, South Africa",
+                "Total followers": 1467
+            },
+            {
+                "Location": "City of Cape Town, South Africa",
+                "Total followers": 432
+            },
+            {
+                "Location": "Pretoria Metropolitan Area, South Africa",
+                "Total followers": 235
+            },
+            {
+                "Location": "Durban Metropolitan Area, South Africa",
+                "Total followers": 145
+            },
+            {
+                "Location": "Nairobi County, Kenya",
+                "Total followers": 73
+            },
+            {
+                "Location": "Greater Bengaluru Area, India",
+                "Total followers": 55
+            },
+            {
+                "Location": "London Area, United Kingdom, United Kingdom",
+                "Total followers": 51
+            },
+            {
+                "Location": "Greater Hyderabad Area, India",
+                "Total followers": 49
+            },
+            {
+                "Location": "Rhein-Neckar Metropolitan Region, Germany",
+                "Total followers": 47
+            },
+            {
+                "Location": "Greater Paris Metropolitan Region, France",
+                "Total followers": 41
+            }
+        ],
+        "Job function": [
+            {
+                "Job function": "Information Technology",
+                "Total followers": 1092
+            },
+            {
+                "Job function": "Business Development",
+                "Total followers": 486
+            },
+            {
+                "Job function": "Sales",
+                "Total followers": 296
+            },
+            {
+                "Job function": "Operations",
+                "Total followers": 263
+            },
+            {
+                "Job function": "Engineering",
+                "Total followers": 258
+            },
+            {
+                "Job function": "Program and Project Management",
+                "Total followers": 169
+            },
+            {
+                "Job function": "Consulting",
+                "Total followers": 144
+            },
+            {
+                "Job function": "Human Resources",
+                "Total followers": 143
+            },
+            {
+                "Job function": "Finance",
+                "Total followers": 120
+            },
+            {
+                "Job function": "Marketing",
+                "Total followers": 118
+            }
+        ],
+        "Seniority": [
+            {
+                "Seniority": "Senior",
+                "Total followers": 1961
+            },
+            {
+                "Seniority": "Entry",
+                "Total followers": 759
+            },
+            {
+                "Seniority": "Director",
+                "Total followers": 397
+            },
+            {
+                "Seniority": "Manager",
+                "Total followers": 342
+            },
+            {
+                "Seniority": "VP",
+                "Total followers": 134
+            },
+            {
+                "Seniority": "CXO",
+                "Total followers": 123
+            },
+            {
+                "Seniority": "Owner",
+                "Total followers": 85
+            },
+            {
+                "Seniority": "Training",
+                "Total followers": 52
+            },
+            {
+                "Seniority": "Partner",
+                "Total followers": 41
+            },
+            {
+                "Seniority": "Unpaid",
+                "Total followers": 6
+            }
+        ],
+        "Industry": [
+            {
+                "Industry": "IT Services and IT Consulting",
+                "Total followers": 1162
+            },
+            {
+                "Industry": "Software Development",
+                "Total followers": 534
+            },
+            {
+                "Industry": "Business Consulting and Services",
+                "Total followers": 191
+            },
+            {
+                "Industry": "Retail",
+                "Total followers": 152
+            },
+            {
+                "Industry": "Financial Services",
+                "Total followers": 125
+            },
+            {
+                "Industry": "Accounting",
+                "Total followers": 73
+            },
+            {
+                "Industry": "Banking",
+                "Total followers": 68
+            },
+            {
+                "Industry": "Government Administration",
+                "Total followers": 66
+            },
+            {
+                "Industry": "Oil and Gas",
+                "Total followers": 63
+            },
+            {
+                "Industry": "Telecommunications",
+                "Total followers": 62
+            }
+        ]
+    }
+};
+
+    </script>
+
+    <script>
+        const globalData = typeof window.dashboardData !== 'undefined' ? window.dashboardData : null;
+
+        function switchTab(arg1, arg2) {
+            const event = arg2 !== undefined ? arg1 : null;
+            const tabName = arg2 !== undefined ? arg2 : arg1;
+
+            // Hide all tab panes
+            const panes = document.querySelectorAll('.tab-pane');
+            panes.forEach(pane => {
+                pane.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected tab pane
+            const selectedPane = document.getElementById(tabName);
+            if (selectedPane) {
+                selectedPane.classList.add('active');
+            }
+
+            // Add active class to clicked button
+            if (event && event.target) {
+                event.target.closest('.tab-button').classList.add('active');
+            } else {
+                // Initial load case
+                const btn = document.querySelector(`.tab-button[onclick*="'${tabName}'"]`);
+                if (btn) btn.classList.add('active');
+            }
+
+            // Store in localStorage
+            localStorage.setItem('activeTab', tabName);
+        }
+
+        function updateLinkedInTab() {
+            if (!globalData) return;
+
+            // Update KPIs
+            const followersEl = document.getElementById('kpi-followers');
+            if (followersEl) followersEl.textContent = globalData.summary.total_followers.toLocaleString();
+            
+            const followersGrowthEl = document.getElementById('kpi-followers-growth');
+            if (followersGrowthEl) followersGrowthEl.textContent = (globalData.summary.follower_growth_pct >= 0 ? '+' : '') + globalData.summary.follower_growth_pct + '%';
+            
+            const engagementEl = document.getElementById('kpi-engagement');
+            if (engagementEl) engagementEl.textContent = globalData.summary.total_engagements.toLocaleString();
+            
+            const engagementRateEl = document.getElementById('kpi-engagement-rate');
+            if (engagementRateEl) engagementRateEl.textContent = globalData.summary.engagement_rate + '%';
+            
+            const impressionsEl = document.getElementById('kpi-impressions');
+            if (impressionsEl) impressionsEl.textContent = (globalData.summary.total_impressions / 1000).toFixed(1) + 'K';
+
+            // Update Top Posts
+            const postsContainer = document.getElementById('top-posts-container');
+            if (postsContainer && globalData.top_posts) {
+                postsContainer.innerHTML = '';
+                const maxRate = Math.max(...globalData.top_posts.map(p => p['Engagement rate']));
+                globalData.top_posts.forEach(post => {
+                    const postTitle = post['Post title'].split('\n')[0].substring(0, 50) + (post['Post title'].length > 50 ? '...' : '');
+                    const rateVal = post['Engagement rate'];
+                    const ratePctDisplay = (rateVal * 100).toFixed(1);
+                    const barWidth = maxRate > 0 ? (rateVal / maxRate) * 100 : 0;
+                    postsContainer.innerHTML += `
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold text-[#616f89] dark:text-gray-400 mb-1">
+                                <span title="${post['Post title'].replace(/"/g, '&quot;')}">${postTitle}</span>
+                                <span>${ratePctDisplay}%</span>
+                            </div>
+                            <div class="w-full bg-[#f0f2f4] dark:bg-[#2d3748] h-3 rounded-full overflow-hidden">
+                                <div class="bg-primary h-full rounded-full" style="width: ${barWidth}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // Update Industries
+            const industriesContainer = document.getElementById('industries-container');
+            if (industriesContainer && globalData.demographics && globalData.demographics.Industry) {
+                const industries = globalData.demographics.Industry.slice(0, 3);
+                const total = industries.reduce((sum, ind) => sum + ind['Total followers'], 0);
+                const colors = ['bg-primary', 'bg-primary/60', 'bg-primary/30'];
+                
+                let legendHtml = '<div class="flex-1 space-y-3">';
+                industries.forEach((ind, i) => {
+                    const pct = ((ind['Total followers'] / total) * 100).toFixed(0);
+                    legendHtml += `
+                        <div class="flex items-center gap-2">
+                            <div class="size-3 rounded-full ${colors[i]}"></div>
+                            <span class="text-xs font-semibold text-[#616f89] dark:text-gray-400">${ind.Industry} (${pct}%)</span>
+                        </div>
+                    `;
+                });
+                legendHtml += '</div>';
+
+                // Simplified SVG Donut
+                const svgHtml = `
+                    <div class="relative size-40 shrink-0">
+                        <svg class="size-full" viewbox="0 0 36 36">
+                            <circle class="stroke-[#f0f2f4] dark:stroke-[#2d3748]" cx="18" cy="18" fill="none" r="16" stroke-width="4"></circle>
+                            <circle class="stroke-primary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="45, 100" stroke-dashoffset="0" stroke-width="4" transform="rotate(-90 18 18)"></circle>
+                            <circle class="stroke-primary/60" cx="18" cy="18" fill="none" r="16" stroke-dasharray="25, 100" stroke-dashoffset="-45" stroke-width="4" transform="rotate(-90 18 18)"></circle>
+                            <circle class="stroke-primary/30" cx="18" cy="18" fill="none" r="16" stroke-dasharray="30, 100" stroke-dashoffset="-70" stroke-width="4" transform="rotate(-90 18 18)"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span class="text-xl font-bold">100%</span>
+                        </div>
+                    </div>
+                `;
+                industriesContainer.innerHTML = svgHtml + legendHtml;
+            }
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Restore dark mode preference
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            if (darkMode) {
+                document.documentElement.classList.add('dark');
+            }
+
+            // Update dynamic elements
+            updateLinkedInTab();
+
+            // Restore active tab
+            const activeTab = localStorage.getItem('activeTab') || 'linkedin';
+            switchTab(activeTab);
+        });
+    </script>
+</body>
+</html>
